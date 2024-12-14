@@ -1,43 +1,29 @@
 cmake_minimum_required(VERSION 3.10)
-project(lr6 VERSION 1.0)
+project(FightProject2)
 
-# Установка стандарта C++
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=uninitialized")
 
-# Установка Google Test через FetchContent
+# Добавление опций компиляции
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=maybe-uninitialized")
+
+# Добавляем заголовочные файлы Google Test в путь поиска компилятора
+include_directories(${googletest_SOURCE_DIR}/googletest/include)
+
+# Установка Google Test
 include(FetchContent)
 FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.15.2
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG v1.15.2
+  TLS_VERIFY false
 )
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Основная библиотека
-add_library(lab_7_lib)
+include_directories(${googletest_SOURCE_DIR}/googletest/include)
 
-# Добавление директорий для заголовочных файлов
-target_include_directories(lab_7_lib
-    PUBLIC
-        src
-        include
-)
+include_directories(include)
 
-file(GLOB_RECURSE LAB7_SRC src/*.cpp)
-target_sources(lab_7_lib PRIVATE ${LAB7_SRC})
-
-# Основной исполняемый файл
-add_executable(lab_7_exe main.cpp)
-target_link_libraries(lab_7_exe PRIVATE lab_7_lib)
-
-# Настройка тестов
-enable_testing()
-
-# Создание тестового исполняемого файла
-add_executable(tests test/test01.cpp)
-target_link_libraries(tests PRIVATE lab_7_lib gtest_main)
-
-# Добавление тестов в набор
-add_test(NAME Tests7 COMMAND tests)
+add_executable(lab07  src/Dragon.cpp src/NPC.cpp src/bull.cpp src/Frog.cpp  src/main.cpp )

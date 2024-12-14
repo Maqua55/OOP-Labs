@@ -1,43 +1,34 @@
 cmake_minimum_required(VERSION 3.10)
-project(lr6 VERSION 1.0)
+project(FiguresProject)
 
-# Установка стандарта C++
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=uninitialized")
 
-# Установка Google Test через FetchContent
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=maybe-uninitialized")
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 include(FetchContent)
 FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.15.2
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG v1.15.2
+  TLS_VERIFY false
 )
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Основная библиотека
-add_library(lab_6_lib)
-
-# Добавление директорий для заголовочных файлов
-target_include_directories(lab_6_lib
-    PUBLIC
-        src
-        include
+file(GLOB_RECURSE SOURCES
+    ${CMAKE_SOURCE_DIR}/npc/*.cpp
 )
 
-file(GLOB_RECURSE LAB6_SRC src/*.cpp)
-target_sources(lab_6_lib PRIVATE ${LAB6_SRC})
+add_executable(lab06 main.cpp ${SOURCES})
 
-# Основной исполняемый файл
-add_executable(lab_6_exe main.cpp)
-target_link_libraries(lab_6_exe PRIVATE lab_6_lib)
+file(GLOB_RECURSE TEST_SOURCES ${CMAKE_SOURCE_DIR}/tests/*.cpp)
+add_executable(lab_tests ${TEST_SOURCES} ${SOURCES})
 
-# Настройка тестов
+target_link_libraries(lab_tests PRIVATE gtest gtest_main)
+
 enable_testing()
 
-# Создание тестового исполняемого файла
-add_executable(tests test/test01.cpp)
-target_link_libraries(tests PRIVATE lab_6_lib gtest_main)
-
-# Добавление тестов в набор
-add_test(NAME Tests6 COMMAND tests)
+add_test(NAME lab_tests COMMAND lab_tests)

@@ -1,39 +1,48 @@
-#include "../include/Dragon.h"
-#include <random>
+#include "../include/dragon.h"
 #include <iostream>
+#include <cmath>
+#include "../include/bull.h"
+#include "../include/frog.h"
+#include "../include/NPC.h"
 
-Dragon::Dragon(const std::string& name, int x, int y)
-    : NPC(name, x, y) {}
+Dragon::Dragon(int x, int y, const std::string& name) : NPC(DragonType, x, y, name) {}
 
-std::string Dragon::getType() const {
-    return "Dragon";
+Dragon::Dragon(std::istream& is) : NPC(DragonType, is) {}
+
+void Dragon::print() {
+    std::cout << *this;
 }
 
-int Dragon::getMovementDistance() const {
-    return 3; 
+bool Dragon::is_dragon() const {
+    return true;
 }
 
-int Dragon::getKillingRange() const {
-    return 5;
-}
-
-bool Dragon::fight(NPC& opponent) {
-    if (!opponent.isAlive()) return false;
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dice(1, 6);
-
-    int attack = dice(gen);
-    int defense = dice(gen);
-
-    std::cout << "Dragon " << getName() << " attacks " << opponent.getName()
-              << " with attack roll: " << attack << ", defense roll: " << defense << "\n";
-
-    if (attack > defense) {
-        std::cout << opponent.getName() << " has been defeated by " << getName() << "\n";
-        opponent.markAsDead();
-        return true;
-    }
+bool Dragon::fight(std::shared_ptr<Dragon> other) {
+    fight_notify(other, false); 
     return false;
+}
+
+bool Dragon::fight(std::shared_ptr<Frog> other) {
+    fight_notify(other, false);
+    return false;
+}
+
+bool Dragon::fight(std::shared_ptr<Bull> other) {
+    fight_notify(other, true); 
+    return true;
+}
+
+void Dragon::save(std::ostream& os) {
+    os << DragonType << std::endl;
+    NPC::save(os);
+}
+
+std::ostream& operator<<(std::ostream& os, Dragon& Dragon) {
+    os << "Dragon: " << *static_cast<NPC*>(&Dragon) << std::endl;
+    return os;
+}
+
+bool Dragon::accept(std::shared_ptr<NPC> attacker) {
+    // Используем базовую логику из NPC
+    return NPC::accept(attacker);
 }

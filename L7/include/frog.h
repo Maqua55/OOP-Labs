@@ -1,13 +1,13 @@
+#pragma once
 #include "NPC.h"
 
-struct Dragon : public NPC {
-    Dragon(int x, int y, const std::string& name);
-
-    Dragon(std::istream& is);
+struct Frog : public NPC {
+    Frog(int x, int y, const std::string& name);
+    Frog(std::istream& is);
 
     void print() override;
 
-    bool is_dragon() const override;
+    bool is_frog() const override;
 
     bool accept(std::shared_ptr<NPC> attacker) override;
 
@@ -17,7 +17,7 @@ struct Dragon : public NPC {
 
     void save(std::ostream& os) override;
 
-    friend std::ostream& operator<<(std::ostream& os, Dragon& Dragon);
+    friend std::ostream& operator<<(std::ostream& os, Frog& Frog);
 
-    ~Dragon() = default;
+    ~Frog() = default;
 };

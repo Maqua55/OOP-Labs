@@ -1,15 +1,22 @@
 #ifndef DRAGON_H
 #define DRAGON_H
 
-#include "NPC.h"
+#include "npc.h"
+
+class Bull;
+class Toad;
 
 class Dragon : public NPC {
 public:
-    Dragon(std::string name, int x, int y) : NPC(std::move(name), x, y) {}
+    Dragon(const std::string& name, int x, int y) : NPC(name, x, y) {}
 
     std::string getType() const override { return "Dragon"; }
 
-    bool fight(NPC &opponent) override;
+    bool canDefeat(NPC* other) const override {
+        return other->getType() == "Bull";
+    }
+
+    void accept(NPC* attacker, const int& distance) override;
 };
 
 #endif

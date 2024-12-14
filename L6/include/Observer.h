@@ -5,8 +5,8 @@
 
 class Observer {
 public:
-    virtual void logEvent(const std::string &event) = 0;
     virtual ~Observer() = default;
+    virtual void update(const std::string& message) = 0;
 };
 
 #endif
